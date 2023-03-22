@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+import sys
+import os 
+
+fin = open("Dockerfile","w")
+
+
+fin.write('FROM ubuntu:18.04 \n')
+fin.write('\n')
+
+fin.write('EXPOSE 9080 \n')
+fin.write('\n')
+
+fin.write('RUN apt-get update \
+&& apt-get install -y git \n')
+fin.write('RUN git clone https://github.com/CDPS-ETSIT/practica_creativa2.git \n')
+fin.write('RUN apt-get install -y python3-pip \n')
+fin.write('\n')
+
+fin.write("ENV GROUP_NUMBER=43\n")
+fin.write('\n')
+fin.write('WORKDIR practica_creativa2/bookinfo/src/productpage \n')
+fin.write('RUN sed -i "s/BookInfo Sample/GRUPO: $GROUP_NUMBER/g" templates/productpage.html \n')
+fin.write('\n')
+fin.write('RUN pip3 install -r requirements.txt \n')
+fin.write('\n')
+fin.write('CMD ["python3","productpage_monolith.py","9080"] \n')
+
+fin.close()
+
+
+os.system("docker build -t '43/product-page' .")
+os.system('docker run --name 43-product-page -p 9080:9080 -e GROUP_NUMBER=43 -d 43/product-page')

@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+  productpage:
+    build: ./productpage/.
+    environment: 
+      - GROUP-NUMBER=43
+    image: 43/productpage
+    ports:
+      - '9080'
+    container_name: 43-productpage
+
+  details:
+    build: ./details/.
+    image: 43/details
+    environment:
+      - SERVICE_VERSION=v1
+      - ENABLE_EXTERNAL_BOOK_SERVICE=true
+    container_name: 43-details
+    depends_on:
+      - productpage
+    ports:
+      - '9080'
+
+  reviews:
+    build: ./reviews/reviews-wlpcfg/.
+    image: 43/reviews
+    container_name: 43-reviews
+    environment:
+      - SERVERDIRNAME=reviews
+      - SERVICE_VERSION=v1
+      - ENABLE_RATINGS=false
+      - STAR_COLOR=black
+    depends_on:
+      - productpage
+    ports:
+      - '9080'
+
+  ratings:
+    build: ./ratings/.
+    image: 43/ratings
+    container_name: 43-ratings
+    ports:
+      - '9080'
+    environment:
+      - SERVICE_VERSION=v1
+    depends_on:
+      - reviews
